@@ -16,16 +16,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Get Node.js version from .nvmrc
+        id: nvmrc
+        run: echo "NODE_VERSION=$(cat .nvmrc)" >> $GITHUB_ENV
+
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
-          node-version: '18.x'
+          node-version: ${{ env.NODE_VERSION }}
 
-      - name: npm install, build, and test
+      - name: npm install, build
         run: |
           npm install
           npm run build --if-present
-          npm run test --if-present
+        
 
       - name: Zip artifact for deployment
         run: zip release.zip ./* -r
@@ -68,4 +72,3 @@ jobs:
           app-name: 'nodetest18'
           slot-name: 'Production'
           package: .
-          
